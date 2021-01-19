@@ -6,14 +6,16 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
-    "start": "node lib/index.js",
-    "dev": "env-cmd -f ./config/dev.env concurrently \"tsc -w\" \"nodemon lib/index.js\""
+    "start": "node lib/src/index.js",
+    "dev": "env-cmd -f ./config/dev.env concurrently \"tsc -w\" \"nodemon lib/src/index.js\""
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.17.1",
+    "firebase": "^8.2.3",
+    "firebase-admin": "^9.4.2",
     "mongoose": "^5.11.12",
     "nodemon": "^2.0.7"
   },
