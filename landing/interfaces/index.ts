@@ -8,3 +8,10 @@ export type User = {
   id: number
   name: string
 }
+
+
+export type ContactForm = {
+  name: string
+  email: string
+  phone: string
+}
