@@ -3,6 +3,7 @@ import Link from "next/link";
 import Layout from "../components/Layout";
 
 import styles from "../assets/jss/uncreativeDisconnect/pages/indexStyles";
+import CustomButton from "../components/CustomButton";
 
 const IndexPage = () => {
   const classes = useStyles();
@@ -17,6 +18,7 @@ const IndexPage = () => {
                 Get in Contact
               </Button>
             </Link>
+            <CustomButton round />
           </Box>
         </div>
       </Container>
