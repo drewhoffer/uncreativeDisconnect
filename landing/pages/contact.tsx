@@ -11,7 +11,6 @@ interface Props {
 
 const Contact: React.FC<Props> = () => {
   const classes = useStyles();
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   return (
@@ -20,34 +19,30 @@ const Contact: React.FC<Props> = () => {
         {success ? (
           <Typography variant="h5">We will be in contact shortly</Typography>
         ) : (
-          <>
-            {loading ? <CircularProgress /> : <></>}
-            <ContactForm
-              onSubmit={async ({ email, phone, name }) => {
-                try {
-                  setError("");
-                  setLoading(true);
-                  const url = `${baseUrl}/api/contact`;
+            <>
+              <ContactForm
+                onSubmit={async ({ email, phone, name }) => {
+                  try {
+                    setError("");
+                    const url = `${baseUrl}/api/contact`;
 
-                  const payload = { email, phone, name };
-                  const response = await axios.post(url, payload);
-                  console.log(response.data.success);
+                    const payload = { email, phone, name };
+                    const response = await axios.post(url, payload);
+                    console.log(response.data.success);
 
-                  if (response.data) {
-                    console.log(response);
-                    setSuccess(true);
+                    if (response.data) {
+                      console.log(response);
+                      setSuccess(true);
+                    }
+                  } catch (error) {
+                    console.log(error.response.data.message);
+                    setError(error.response.data.message);
                   }
-                } catch (error) {
-                  console.log(error.response.data.message);
-                  setError(error.response.data.message);
-                } finally {
-                  setLoading(false);
-                }
-              }}
-            />
-            <Typography color="error">{error}</Typography>
-          </>
-        )}
+                }}
+              />
+              <Typography color="error">{error}</Typography>
+            </>
+          )}
       </div>
     </Layout>
   );
