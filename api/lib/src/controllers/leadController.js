@@ -12,7 +12,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // Custom imports
 const lead_1 = __importDefault(require("../endpoints/lead"));
 const adaptRequest_1 = __importDefault(require("../helpers/http/adaptRequest"));
-async function employerController(req, res) {
+/**
+ * Passes requests to the lead endpoint and returns responses
+ * @function
+ * @param {Object} req – The incoming network request
+ * @param {Function} res – The response from the endpoint
+ * @return {Function} Returns the server response
+ */
+async function leadController(req, res) {
     const httpRequest = adaptRequest_1.default(req);
     try {
         const { statusCode, data } = await lead_1.default(httpRequest);
@@ -22,5 +29,5 @@ async function employerController(req, res) {
         return res.status(500).send();
     }
 }
-exports.default = employerController;
+exports.default = leadController;
 //# sourceMappingURL=leadController.js.map

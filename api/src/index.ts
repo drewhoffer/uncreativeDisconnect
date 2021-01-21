@@ -14,6 +14,7 @@ import mongoose from "mongoose";
 
 // Custom imports
 import adminTokenController from "./controllers/adminTokenController";
+import userTokenController from "./controllers/userTokenController";
 import leadController from "./controllers/leadController";
 
 // Test imports
@@ -34,6 +35,9 @@ const port = process.env.PORT || 3000;
 // Routes
 // Admins
 app.post("/admin/invite", adminTokenController);
+
+// Users
+app.post("/user/invite", userTokenController);
 
 // Leads
 app.post("/lead", leadController);

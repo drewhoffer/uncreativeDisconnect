@@ -38,7 +38,7 @@ export default async function auth(httpRequest, requiredPermission, next) {
 			const user = await firebase.firestore().collection("users").doc(decodedToken.uid).get();
 
 			// Check if the user has required permissions
-			if (user.data()?.permission != requiredPermission) {
+			if (!requiredPermission.includes(user.data()?.permission)) {
 				return makeHttpError({statusCode: 401, errorMessage: "Unauthorized."});
 			}			
 
