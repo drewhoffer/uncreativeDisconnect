@@ -15,6 +15,7 @@ const cors_1 = __importDefault(require("cors"));
 const mongoose_1 = __importDefault(require("mongoose"));
 // Custom imports
 const adminTokenController_1 = __importDefault(require("./controllers/adminTokenController"));
+const userTokenController_1 = __importDefault(require("./controllers/userTokenController"));
 const leadController_1 = __importDefault(require("./controllers/leadController"));
 // Test imports
 const login_1 = __importDefault(require("./helpers/auth/login"));
@@ -27,6 +28,8 @@ const port = process.env.PORT || 3000;
 // Routes
 // Admins
 app.post("/admin/invite", adminTokenController_1.default);
+// Users
+app.post("/user/invite", userTokenController_1.default);
 // Leads
 app.post("/lead", leadController_1.default);
 // Test route

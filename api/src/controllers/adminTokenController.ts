@@ -11,7 +11,16 @@
 import adminTokenEndpointHandler from "../endpoints/adminToken";
 import adaptRequest from "../helpers/http/adaptRequest";
 
-export default async function employerController(req, res) {
+
+
+/**
+ * Passes requests to the admin token endpoint and returns responses
+ * @function
+ * @param {Object} req – The incoming network request
+ * @param {Function} res – The response from the endpoint
+ * @return {Function} Returns the server response
+ */
+export default async function adminTokenController(req, res) {
 	const httpRequest = adaptRequest(req);
 
 	try {

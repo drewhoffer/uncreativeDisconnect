@@ -1,28 +1,28 @@
 /**
- * @file This file exports the buildAdminTokenEndpointHandler method, which is used
- * to create a adminTokenEndpointHandler function with it's dependencies.
+ * @file This file exports the buildUserTokenEndpointHandler method, which is used
+ * to create a userTokenEndpointHandler function with it's dependencies.
  * @author Trent Thompson
 */
 
 
 
 // Custom imports
-import makeAdminToken from "../../entities/adminToken";
+import makeUserToken from "../../entities/userToken";
 import makeHttpError from "../../helpers/http/http-error";
 import handleError from "../../helpers/errors/handleError";
 
 
 
 /**
- * Builds the adminTokenEndpointHandler function with the injected dependencies.
+ * Builds the userTokenEndpointHandler function with the injected dependencies.
  * @function
- * @param {Object} adminTokenRepo – The data access repo to be used by the endpoint.
+ * @param {Object} userTokenRepo – The data access repo to be used by the endpoint.
  * @param {Function} auth – Ensures user is specific permission level before allowing request.
- * @return {Function} Returns the adminTokenEndpointHandler function.
+ * @return {Function} Returns the userTokenEndpointHandler function.
  */
-export default function buildAdminTokenEndpointHandler(adminTokenRepo, auth) {
+export default function buildAdminTokenEndpointHandler(userTokenRepo, auth) {
 	/**
-     * Handles an http request for a admin token resource.
+     * Handles an http request for a user token resource.
      * @function
      * @param {Object} httpRequest – The request to handle.
      * @return {Object} A response with a status code and requested data.
@@ -30,9 +30,10 @@ export default function buildAdminTokenEndpointHandler(adminTokenRepo, auth) {
 	return async function handle(httpRequest) {
 		const { method } = httpRequest;
 
-		// Check if we are inviting an admin
+		// Check if we are inviting a user
 		if (method === "POST") {
-			return await auth(httpRequest, ["root"], inviteAdmin);
+			// Must be admin or root
+			return await auth(httpRequest, ["admin", "root"], inviteUser);
 		}
 
 		return makeHttpError({ errorMessage: "Something went wrong.", statusCode: 500 });
@@ -41,12 +42,12 @@ export default function buildAdminTokenEndpointHandler(adminTokenRepo, auth) {
 
 
 	/**
-     * Adds admin token and sends invite email.
+     * Adds hser token and sends invite email.
      * @function
      * @param {Object} httpRequest – The request to handle.
      * @return {Object} A 201 response.
      */
-	async function inviteAdmin(httpRequest) {
+	async function inviteUser(httpRequest) {
 		const { email } = httpRequest.body; 
 		if (!email) {
 			return makeHttpError({ errorMessage: "Bad request. No POST body.", statusCode: 400 });
@@ -54,12 +55,12 @@ export default function buildAdminTokenEndpointHandler(adminTokenRepo, auth) {
 
 		// Try to add the token to the database and email the user
 		try {
-			const token = makeAdminToken({
+			const token = makeUserToken({
 				email
 			});
 
 			// Add the token of the user
-			await adminTokenRepo.add(token);
+			await userTokenRepo.add(token);
 
 			// Return success message
 			return {
