@@ -1,93 +1,138 @@
-import { Box, Button, Grid, Paper } from "@material-ui/core";
-import { Formik, Form, Field } from "formik";
-import { MyField } from "./MyField";
-import * as Yup from "yup";
+import {
+  Button,
+  CircularProgress,
+  Step,
+  StepLabel,
+  Stepper,
+  Typography,
+} from "@material-ui/core";
 
-interface Values {
-  name: string;
-  email: string;
-  phone: string;
+import BookDetailsForm from "./ContactForm/BookDetailsForm";
+import AuthorDetailsForm from "./ContactForm/AuthorDetailsForm";
+import ReviewForm from "./ContactForm/ReviewForm";
+
+import validationSchema from "./ContactForm/ContactModel/formSchema";
+import contactFormModel from "./ContactForm/ContactModel/contactFormModel";
+import formInitialValues from "./ContactForm/ContactModel/formInitialValues";
+import { useState } from "react";
+import { ContactSuccess } from "./ContactForm/ContactSuccess";
+import { Form, Formik } from "formik";
+
+const steps = ["Book Details", "Author Details", "Review Contents"];
+const { formId, formField } = contactFormModel;
+
+function _renderStepContent(step: number) {
+  switch (step) {
+    case 0:
+      return <BookDetailsForm formFields={formField} />;
+    case 1:
+      return <AuthorDetailsForm formFields={formField} />;
+
+    case 2:
+      return <ReviewForm />;
+
+    default:
+      return <div>Not Found</div>;
+  }
 }
 
-interface Props {
-  onSubmit: (values: Values) => void;
-}
+const ContactForm: React.FC = () => {
+  //Setup handleSubmit
+  //Takes the values and actions
 
-const ContactForm: React.FC<Props> = ({ onSubmit }) => {
-  const schema = Yup.object().shape({
-    name: Yup.string()
-      .required("Name is required.")
-      .trim()
-      .min(2, "Must be at least 2 characters.")
-      .max(50, "Cannot be longer than 50 characters."),
-    phone: Yup.string().matches(
-      /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$/,
-      "Phone number must be 123 123-1234 format."
-    ),
-    email: Yup.string().email("Invalid email").required("Email is required"),
-  });
+  const [activeStep, setActiveStep] = useState(0);
+  const currentValidationSchema = validationSchema[activeStep];
+  const isLastStep = activeStep === steps.length - 1;
+
+
+  function _handleSubmit(values: any, actions: any) {
+    if (isLastStep) {
+      _submitForm(values, actions);
+    } else {
+      setActiveStep(activeStep + 1);
+      actions.setTouched({});
+      actions.setSubmitting(false);
+    }
+  }
+
+  async function _submitForm(values: any, actions: any) {
+    alert(JSON.stringify(values, null, 2));
+    actions.setSubmitting(false);
+
+    setActiveStep(activeStep + 1);
+  }
+
+  function _handleBack() {
+    setActiveStep(activeStep - 1);
+  }
 
   return (
-    <Formik
-      initialValues={{
-        name: "",
-        email: "",
-        phone: "",
-      }}
-      validationSchema={schema}
-      onSubmit={(values) => {
-        onSubmit(values);
-      }}
-    >
-      {({ errors }) => (
-        <Form>
-          <Paper>
-            <Box p={4}>
-              <Grid
-                container
-                direction="column"
-                justify="center"
-                alignItems="center"
-                spacing={3}
-              >
-                <Grid item xs={12}>
-                  <Field
-                    error={errors.name}
-                    name="name"
-                    label="Name"
-                    placeholder="e.g. John Doe"
-                    component={MyField}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <Field
-                    error={errors.email}
-                    name="email"
-                    placeholder="e.g. johndoe@email.com"
-                    label="Email"
-                    component={MyField}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <Field
-                    error={errors.phone}
-                    name="phone"
-                    placeholder="e.g. 666-666-6666"
-                    label="Phone"
-                    component={MyField}
-                  />
-                </Grid>
+    <>
+      <Typography component="h1" variant="h4" align="center">
+        Contact
+      </Typography>{" "}
+      <Stepper activeStep={activeStep}>
+        {steps.map((label) => (
+          <Step key={label}>
+            <StepLabel>{label}</StepLabel>
+          </Step>
+        ))}
+      </Stepper>
+      <>
+        {activeStep === steps.length ? (
+          <ContactSuccess />
+        ) : (
+          <Formik
+            initialValues={formInitialValues}
+            validationSchema={currentValidationSchema}
+            onSubmit={_handleSubmit}
+            enableReinitialize
+            
+          >
+            {({ isValid, isSubmitting, touched, errors, }) => (
+              <Form id={formId}>
+                {_renderStepContent(activeStep)}
 
-                <Button variant="contained" color="primary" type="submit">
-                  Submit
-                </Button>
-              </Grid>
-            </Box>
-          </Paper>
-        </Form>
-      )}
-    </Formik>
+                <div>
+                  {activeStep !== 0 && (
+                    <Button onClick={_handleBack}>Back</Button>
+                  )}
+                  <div>
+                    <Button
+                      disabled={ isSubmitting }
+                      type="submit"
+                      variant="contained"
+                      color="primary"
+                    >
+                      {isLastStep ? "Place order" : "Next"}
+                    </Button>
+                    {isSubmitting && <CircularProgress size={24} />}
+                    <pre>{JSON.stringify({errors, isValid, isSubmitting, touched}, null, 2)}</pre>
+                  </div>
+                </div>
+              </Form>
+            )}
+          </Formik>
+        )}
+      </>
+    </>
   );
 };
 
 export default ContactForm;
+
+// const useStyles = makeStyles(() => ({
+//   root: {
+//     flexGrow: 1,
+//   },
+//   formContent: {
+//     flexGrow: 1,
+//     width: "100%",
+//   },
+//   heading: {
+//     alignSelf: "flex-start",
+//   },
+//   grow: {
+//     flexGrow: 1,
+//   },
+// }));

@@ -14,36 +14,11 @@ const Contact: React.FC<Props> = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   return (
-    <Layout title="Contact">
+    <Layout title="Contact | Uncreative Disconnect">
       <div className={classes.root}>
-        {success ? (
-          <Typography variant="h5">We will be in contact shortly</Typography>
-        ) : (
-            <>
-              <ContactForm
-                onSubmit={async ({ email, phone, name }) => {
-                  try {
-                    setError("");
-                    const url = `${baseUrl}/api/contact`;
-
-                    const payload = { email, phone, name };
-                    const response = await axios.post(url, payload);
-                    console.log(response.data.success);
-
-                    if (response.data) {
-                      console.log(response);
-                      setSuccess(true);
-                    }
-                  } catch (error) {
-                    console.log(error.response.data.message);
-                    setError(error.response.data.message);
-                  }
-                }}
-              />
-              <Typography color="error">{error}</Typography>
-            </>
-          )}
+        <ContactForm onSubmit={() => console.log("Here")}/>
       </div>
+
     </Layout>
   );
 };
@@ -52,6 +27,7 @@ const useStyles = makeStyles(() => ({
   root: {
     height: "75vh",
     display: "flex",
+    flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
   },
